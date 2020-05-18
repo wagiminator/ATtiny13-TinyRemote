@@ -15,7 +15,8 @@
 // Clockspeed 1.2 MHz internal. BOD should be disabled to save energy.
 // Millis/Tone must be disabled as Timer 0 is used for PWM.
 //
-// 2019 by Stefan Wagner
+// 2019 by Stefan Wagner (https://easyeda.com/wagiminator)
+// License: http://creativecommons.org/licenses/by-sa/3.0/
 //
 // based on the work of Christoph Niessen (http://chris.cnie.de/avr/tcm231421.html)
 // and David Johnson-Davies (http://www.technoblogy.com/show?UVE)

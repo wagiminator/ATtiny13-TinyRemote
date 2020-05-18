@@ -17,7 +17,8 @@
 // Reset pin must be disabled by writing respective fuse after uploading the code:
 // avrdude -p attiny13 -c usbtiny -F -U lfuse:w:0x6a:m -U hfuse:w:0xfe:m
 //
-// 2019 by Stefan Wagner
+// 2019 by Stefan Wagner (https://easyeda.com/wagiminator)
+// License: http://creativecommons.org/licenses/by-sa/3.0/
 //
 // based on the work of Christoph Niessen (http://chris.cnie.de/avr/tcm231421.html)
 // and David Johnson-Davies (http://www.technoblogy.com/show?UVE)
