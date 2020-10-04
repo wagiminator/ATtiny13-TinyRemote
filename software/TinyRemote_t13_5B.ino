@@ -35,7 +35,10 @@
 //                        +----+    
 //
 // Controller: ATtiny13
+// Core:       MicroCore (https://github.com/MCUdude/MicroCore)
 // Clockspeed: 1.2 MHz internal
+// BOD:        BOD disabled (energy saving)
+// Timing:     Micros disabled (Timer0 is in use)
 //
 // Reset pin must be disabled by writing respective fuse after uploading the code:
 // avrdude -p attiny13 -c usbasp -U lfuse:w:0x2a:m -U hfuse:w:0xfe:m
@@ -44,7 +47,7 @@
 // Note: The internal oscillator may need to be calibrated for the device
 //       to function properly.
 //
-// 2020 by Stefan Wagner 
+// 2019 by Stefan Wagner 
 // Project Files (EasyEDA): https://easyeda.com/wagiminator
 // Project Files (Github):  https://github.com/wagiminator
 // License: http://creativecommons.org/licenses/by-sa/3.0/

@@ -1,4 +1,4 @@
-// tinyIRremote for ATtiny13 - 5 Buttons
+// tinyIRremote for ATtiny13 - 4 Buttons
 // 
 // IR remote control using an ATtiny 13. Timer 0 generates a 38kHz
 // pulse frequency with a duty cycle of 25% on the output pin to the IR LED.
@@ -35,16 +35,15 @@
 //                        +----+    
 //
 // Controller: ATtiny13
+// Core:       MicroCore (https://github.com/MCUdude/MicroCore)
 // Clockspeed: 1.2 MHz internal
-//
-// Reset pin must be disabled by writing respective fuse after uploading the code:
-// avrdude -p attiny13 -c usbasp -U lfuse:w:0x2a:m -U hfuse:w:0xfe:m
-// Warning: You will need a high voltage fuse resetter to undo this change!
+// BOD:        BOD disabled (energy saving)
+// Timing:     Micros disabled (Timer0 is in use)
 //
 // Note: The internal oscillator may need to be calibrated for the device
 //       to function properly.
 //
-// 2020 by Stefan Wagner 
+// 2019 by Stefan Wagner 
 // Project Files (EasyEDA): https://easyeda.com/wagiminator
 // Project Files (Github):  https://github.com/wagiminator
 // License: http://creativecommons.org/licenses/by-sa/3.0/
@@ -69,7 +68,6 @@
 #define KEY2  0x00  // Channel+
 #define KEY3  0x03  // Volume-
 #define KEY4  0x01  // Channel-
-#define KEY5  0x08  // Power
 
 // define values for 38kHz PWM frequency and 25% duty cycle
 #define TOP   31                      // 1200kHz / 38kHz - 1 = 31
@@ -140,7 +138,7 @@ int main(void){
 
   // setup pin change interrupt
   GIMSK = 0b00100000;                     // turn on pin change interrupts
-  PCMSK = 0b00111101;                     // turn on interrupt on button pins
+  PCMSK = 0b00011101;                     // turn on interrupt on button pins
 
   // disable ADC and analog comperator for energy saving
   ADCSRA = 0b00000000;                    // disable ADC
@@ -150,16 +148,15 @@ int main(void){
   while(1) {
     sleep();                              // sleep until button is pressed
     _delay_ms(1);                         // debounce
-    uint8_t buttons = ~PINB & 0b00111101; // read button pins
+    uint8_t buttons = ~PINB & 0b00011101; // read button pins
     switch (buttons) {                    // send corresponding IR code
       case 0b00000001: sendCode(KEY1); break;
       case 0b00000100: sendCode(KEY2); break;
       case 0b00001000: sendCode(KEY3); break;
       case 0b00010000: sendCode(KEY4); break;
-      case 0b00100000: sendCode(KEY5); break;
       default: break;
     }
-    while (~PINB & 0b00111101) repeatCode();// send repeat command until button is released
+    while (~PINB & 0b00011101) repeatCode();// send repeat command until button is released
   }
 }
 

@@ -10,8 +10,8 @@
 DEVICE  = attiny13
 CLOCK   = 1200000
 PROGRMR = usbasp
+LFUSE   = 0x2a
 HFUSE   = 0xfe
-LFUSE   = 0x6a
 
 # Objects
 OBJECTS = main.o
