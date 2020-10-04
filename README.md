@@ -14,6 +14,7 @@ IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards
 - the 8-bit logical inverse of the address,
 - the 8-bit command and
 - the 8-bit logical inverse of the command.
+
 If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5us burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
 
 The code utilizes the sleep mode power down function. The device will work several months on an CR2032 battery.
