@@ -25,7 +25,7 @@
 // sent out at 108ms intervals, until the key is finally released.
 //
 // The code utilizes the sleep mode power down function. The device will
-// work several months on an CR2032 battery.
+// work several months on a CR2032 battery.
 //
 //                        +-\/-+
 // KEY5 --- A0 (D5) PB5  1|    |8  Vcc
