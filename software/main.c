@@ -25,7 +25,7 @@
 // sent out at 108ms intervals, until the key is finally released.
 //
 // The code utilizes the sleep mode power down function. The device will
-// work several months on an CR2032 battery.
+// work several months on a CR2032 battery.
 //
 //                        +-\/-+
 // KEY5 --- A0 (D5) PB5  1|    |8  Vcc
@@ -44,7 +44,7 @@
 // Note: The internal oscillator may need to be calibrated for the device
 //       to function properly.
 //
-// 2020 by Stefan Wagner 
+// 2019 by Stefan Wagner 
 // Project Files (EasyEDA): https://easyeda.com/wagiminator
 // Project Files (Github):  https://github.com/wagiminator
 // License: http://creativecommons.org/licenses/by-sa/3.0/
