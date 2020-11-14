@@ -7,6 +7,7 @@ The code utilizes the sleep mode power down function. The device will work sever
 
 ![IMG_20200105_115938_x.jpg](https://image.easyeda.com/pullimage/VIS5ZlaEejDmMenv7sVxYe85p3RsQkphLDLCliZ2.jpeg)
 
+# Working Principle
 Timer 0 generates a 38kHz pulse frequency with a duty cycle of 25% on the output pin to the IR LED. The signal (NEC protocol) is modulated by toggling the pin to input/output.
 
 IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards 4 data bytes are transmitted, least significant bit first. A "0" bit is a 562.5us burst followed by a 562.5us pause, a "1" bit is a 562.5us burst followed by a 1687.5us pause. A final 562.5us burst signifies the end of the transmission. The four data bytes are in order:
@@ -15,10 +16,19 @@ IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards
 - the 8-bit command and
 - the 8-bit logical inverse of the command.
 
+![NEC_transmission.png](https://techdocs.altium.com/sites/default/files/wiki_attachments/296329/NECMessageFrame.png)
+
 If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5us burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
+
+![NEC_repeat.png](https://techdocs.altium.com/sites/default/files/wiki_attachments/296329/NECRepeatCodes.png)
 
 Here's the result, captured with a logic analyzer:
 
 ![PWM.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_PWM.png)
 ![NEC_protocol.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_NEC.png)
 ![pic1.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic1.jpg)
+
+# References, Links and Notes
+- [NEC infrared transmission protocol (altium.com)](https://techdocs.altium.com/display/FPGA/NEC+Infrared+Transmission+Protocol)
+- [NEC protocol explanation by David Johnson-Davies](http://www.technoblogy.com/show?UVE)
+- [IR remote control by Christoph Niessen](http://chris.cnie.de/avr/tcm231421.html)
