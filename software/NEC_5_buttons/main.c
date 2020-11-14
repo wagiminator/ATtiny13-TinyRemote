@@ -1,6 +1,6 @@
-// tinyIRremote for ATtiny13 - 5 Buttons
+// tinyIRremote for ATtiny13A - NEC, 5 Buttons
 // 
-// IR remote control using an ATtiny 13. Timer 0 generates a 38kHz
+// IR remote control using an ATtiny 13A. Timer 0 generates a 38kHz
 // pulse frequency with a duty cycle of 25% on the output pin to the IR LED.
 // The signal (NEC protocol) is modulated by toggling the pin to input/output.
 //
@@ -34,11 +34,8 @@
 //                  GND  4|    |5  PB0 (D0) ------ KEY1
 //                        +----+    
 //
-// Controller: ATtiny13
-// Core:       MicroCore (https://github.com/MCUdude/MicroCore)
+// Controller: ATtiny13A
 // Clockspeed: 1.2 MHz internal
-// BOD:        BOD disabled (energy saving)
-// Timing:     Micros disabled (Timer0 is in use)
 //
 // Reset pin must be disabled by writing respective fuse after uploading the code:
 // avrdude -p attiny13 -c usbasp -U lfuse:w:0x2a:m -U hfuse:w:0xfe:m
@@ -63,7 +60,6 @@
 #include <avr/io.h>
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
-#include <avr/power.h>
 #include <util/delay.h>
 
 // IR codes
@@ -78,32 +74,29 @@
 #define TOP   31                      // 1200kHz / 38kHz - 1 = 31
 #define DUTY  7                       // 1200kHz / 38kHz / 4 - 1 = 7
 
-// commands to switch on/off IR LED
+// macros to switch on/off IR LED
 #define IRon()   DDRB |= 0b00000010   // PB1 as output = IR at OC0B (38 kHz)
 #define IRoff()  DDRB &= 0b11111101   // PB1 as input  = LED off
 
-// commands to modulate the signals according to NEC protocol
-#define startPulse()    {IRon(); _delay_us(9000); IRoff();}
-#define normalPulse()   {IRon(); _delay_us(562);  IRoff();}
-#define bit0Pause()     _delay_us(562)
-#define bit1Pause()     _delay_us(1687)
-#define startPause()    _delay_us(4500)
-#define repeatPause()   _delay_us(2250)
-#define repeatCode()    {_delay_ms(40); startPulse(); repeatPause(); normalPulse(); _delay_ms(56);}
+// macros to modulate the signals according to NEC protocol with compensated timings
+#define startPulse()    {IRon(); _delay_us(9000); IRoff(); _delay_us(4500);}
+#define repeatPulse()   {IRon(); _delay_us(9000); IRoff(); _delay_us(2250);}
+#define normalPulse()   {IRon(); _delay_us( 562); IRoff(); _delay_us( 557);}
+#define bit1Pause()     _delay_us(1120) // 1687.5us - 562.5us = 1125us
+#define repeatCode()    {_delay_ms(40); repeatPulse(); normalPulse(); _delay_ms(56);}
 
 
 // send a single byte via IR
 void sendByte(uint8_t value){
-  for (uint8_t i=8; i; i--, value>>=1) {      // send 8 bits, LSB first
-    normalPulse();                            // 562us burst
-    (value & 1) ? bit1Pause() : bit0Pause();  // pause time depending on bit
+  for (uint8_t i=8; i; i--, value>>=1) {  // send 8 bits, LSB first
+    normalPulse();                        // 562us burst, 562us pause
+    if (value & 1) bit1Pause();           // extend pause if bit is 1
   }
 }
 
 // send complete code (address + command) via IR
 void sendCode(uint8_t code){
-  startPulse();       // 9ms start burst
-  startPause();       // 4.5ms pause
+  startPulse();       // 9ms burst + 4.5ms pause to signify start of transmission
   sendByte(ADDR);     // send address byte
   sendByte(~ADDR);    // send inverse of address byte
   sendByte(code);     // send code byte
@@ -111,50 +104,40 @@ void sendCode(uint8_t code){
   normalPulse();      // 562us burst to signify end of transmission
 }
 
-// go to sleep in order to save energy, wake up again by pin change interrupt (button pressed)
-void sleep(void) {
-  set_sleep_mode (SLEEP_MODE_PWR_DOWN);   // set sleep mode to power down
-  GIFR |= 0b00100000;                     // clear any outstanding interrupts
-  power_all_disable();                    // power everything off
-  cli();                                  // timed sequence coming up
-  sleep_enable();                         // ready to sleep
-  sei();                                  // interrupts are required now
-  sleep_cpu();                            // sleep              
-  sleep_disable();                        // precaution
-  power_all_enable();                     // power everything back on
-}
-
 // main function
 int main(void){
   // set oscillator calibration value
   #ifdef OSCCAL_VAL
-    OSCCAL = OSCCAL_VAL;                  // set the value if defined above
+    OSCCAL = OSCCAL_VAL;                // set the value if defined above
   #endif
 
   // setup pins
-  DDRB  = 0b00000000;                     // all pins are input pins by now
-  PORTB = 0b00111101;                     // pull-up for button pins
+  DDRB  = 0b00000000;                   // all pins are input pins by now
+  PORTB = 0b00111101;                   // pull-up for button pins
   
   // set timer0 to toggle IR pin at 38 kHz
-  TCCR0A = 0b00100011;                    // PWM on OC0B (PB1)
-  TCCR0B = 0b00001001;                    // no prescaler
-  OCR0A  = TOP;                           // 38 kHz PWM frequency
-  OCR0B  = DUTY;                          // 25 % duty cycle
+  TCCR0A = 0b00100011;                  // PWM on OC0B (PB1)
+  TCCR0B = 0b00001001;                  // no prescaler
+  OCR0A  = TOP;                         // 38 kHz PWM frequency
+  OCR0B  = DUTY;                        // 25 % duty cycle
 
   // setup pin change interrupt
-  GIMSK = 0b00100000;                     // turn on pin change interrupts
-  PCMSK = 0b00111101;                     // turn on interrupt on button pins
+  GIMSK = 0b00100000;                   // turn on pin change interrupts
+  PCMSK = 0b00111101;                   // turn on interrupt on button pins
+  SREG |= 0b10000000;                   // enable global interrupts
 
-  // disable ADC and analog comperator for energy saving
-  ADCSRA = 0b00000000;                    // disable ADC
-  ACSR   = 0b10000000;                    // disable analog comperator
+  // disable unused peripherals and set sleep mode to save power
+  ADCSRA = 0b00000000;                  // disable ADC
+  ACSR   = 0b10000000;                  // disable analog comperator
+  PRR    = 0b00000001;                  // shut down ADC
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);  // set sleep mode to power down
 
   // main loop
   while(1) {
-    sleep();                              // sleep until button is pressed
-    _delay_ms(1);                         // debounce
-    uint8_t buttons = ~PINB & 0b00111101; // read button pins
-    switch (buttons) {                    // send corresponding IR code
+    sleep_mode();                             // sleep until button is pressed
+    _delay_ms(1);                             // debounce
+    uint8_t buttons = ~PINB & 0b00111101;     // read button pins
+    switch (buttons) {                        // send corresponding IR code
       case 0b00000001: sendCode(KEY1); break;
       case 0b00000100: sendCode(KEY2); break;
       case 0b00001000: sendCode(KEY3); break;
@@ -162,9 +145,9 @@ int main(void){
       case 0b00100000: sendCode(KEY5); break;
       default: break;
     }
-    while (~PINB & 0b00111101) repeatCode();// send repeat command until button is released
+    while (~PINB & 0b00111101) repeatCode();  // send repeat command until button is released
   }
 }
 
 // pin change interrupt service routine
-EMPTY_INTERRUPT (PCINT0_vect);              // nothing to be done here, just wake up from sleep
+EMPTY_INTERRUPT (PCINT0_vect);                // nothing to be done here, just wake up from sleep
