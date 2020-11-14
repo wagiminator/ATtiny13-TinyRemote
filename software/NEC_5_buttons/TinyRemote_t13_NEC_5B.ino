@@ -34,7 +34,7 @@
 //                  GND  4|    |5  PB0 (D0) ------ KEY1
 //                        +----+    
 //
-// Controller: ATtiny13
+// Controller: ATtiny13A
 // Core:       MicroCore (https://github.com/MCUdude/MicroCore)
 // Clockspeed: 1.2 MHz internal
 // BOD:        BOD disabled (energy saving)
