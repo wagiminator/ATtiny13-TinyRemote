@@ -40,10 +40,8 @@ IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards
 
 // macros to modulate the signals according to NEC protocol with compensated timings
 #define startPulse()    {IRon(); _delay_us(9000); IRoff(); _delay_us(4500);}
-#define repeatPulse()   {IRon(); _delay_us(9000); IRoff(); _delay_us(2250);}
 #define normalPulse()   {IRon(); _delay_us( 562); IRoff(); _delay_us( 557);}
 #define bit1Pause()     _delay_us(1120) // 1687.5us - 562.5us = 1125us
-#define repeatCode()    {_delay_ms(40); repeatPulse(); normalPulse(); _delay_ms(56);}
 
 // send a single byte via IR
 void sendByte(uint8_t value){
@@ -73,6 +71,10 @@ If the key on the remote controller is kept depressed, a repeat code will be iss
 ![NEC_repeat.png](https://techdocs.altium.com/sites/default/files/wiki_attachments/296329/NECRepeatCodes.png)
 
 ```c
+// macros to modulate the signals according to NEC protocol with compensated timings
+#define repeatPulse()   {IRon(); _delay_us(9000); IRoff(); _delay_us(2250);}
+#define repeatCode()    {_delay_ms(40); repeatPulse(); normalPulse(); _delay_ms(56);}
+
 // send repeat command until button is released
 while (~PINB & 0b00111101) repeatCode();
 ```
