@@ -1,5 +1,6 @@
 # TinyRemote - IR Remote Control based on ATtiny13a
 TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or LIR2032 coin cell battery. The code is a full implementation of the NEC protocol using only 370 bytes (36%) of program memory.
+The code utilizes the sleep mode power down function. The device will work several months on a CR2032 battery.
 
 Project Video: https://youtu.be/ad3eyNCov9c
 
@@ -17,4 +18,8 @@ IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards
 
 If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5us burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
 
-The code utilizes the sleep mode power down function. The device will work several months on a CR2032 battery.
+Here's the result, captured with a logic analyzer:
+
+![PWM.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_PWM.png)
+![NEC_protocol.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_NEC.png)
+![pic1.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic1.jpg)
