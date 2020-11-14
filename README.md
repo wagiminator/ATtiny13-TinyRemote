@@ -74,7 +74,7 @@ If the key on the remote controller is kept depressed, a repeat code will be iss
 
 ```c
 // send repeat command until button is released
-while (~PINB & 0b00011101) repeatCode();
+while (~PINB & 0b00111101) repeatCode();
 ```
 
 The code utilizes the sleep mode power down function. It wakes up on every button press by pin change interrupt. The device will work several months on a CR2032 battery.
@@ -82,7 +82,7 @@ The code utilizes the sleep mode power down function. It wakes up on every butto
 ```c
 // setup pin change interrupt
 GIMSK = 0b00100000;                   // turn on pin change interrupts
-PCMSK = 0b00011101;                   // turn on interrupt on button pins
+PCMSK = 0b00111101;                   // turn on interrupt on button pins
 SREG |= 0b10000000;                   // enable global interrupts
 
 // disable unused peripherals and set sleep mode to save power
