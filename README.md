@@ -4,9 +4,22 @@ TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or 
 - Project Video: https://youtu.be/ad3eyNCov9c
 - Project on EasyEDA: https://easyeda.com/wagiminator/attiny13-tinyremote
 
-![IMG_20200105_115938_x.jpg](https://image.easyeda.com/pullimage/VIS5ZlaEejDmMenv7sVxYe85p3RsQkphLDLCliZ2.jpeg)
+![IMG_20200105_115938_x.jpeg](https://image.easyeda.com/pullimage/VIS5ZlaEejDmMenv7sVxYe85p3RsQkphLDLCliZ2.jpeg)
 
-# Working Principle
+# Hardware
+The wiring is pretty simple:
+
+![Wiring.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_wiring.png)
+
+If you want to use only four buttons, you can leave KEY5 unsoldered and upload the 4-button version of the firmware. If you want to use all five buttons, you have to disable the RESET in PB5 by burning the respective fuses:
+
+```
+avrdude -c usbasp -p t13 -U lfuse:w:0x2a:m -U hfuse:w:0xfe:m
+```
+
+Warning: You will need a high voltage fuse resetter to undo this change!
+
+# Software
 Timer 0 generates a 38kHz pulse frequency with a duty cycle of 25% on the output pin to the IR LED. The signal (NEC protocol) is modulated by toggling the pin to input/output.
 
 ```c
@@ -23,7 +36,7 @@ OCR0B  = DUTY;            // 25 % duty cycle
 
 Here's the result, captured with a logic analyzer:
 
-![PWM.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_PWM.png)
+![PWM.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_PWM.png)
 
 IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards 4 data bytes are transmitted, least significant bit first. A "0" bit is a 562.5us burst followed by a 562.5us pause, a "1" bit is a 562.5us burst followed by a 1687.5us pause. A final 562.5us burst signifies the end of the transmission. The four data bytes are in order:
 - the 8-bit address for the receiving device,
@@ -64,7 +77,7 @@ void sendCode(uint8_t code){
 
 Here's the result, captured with a logic analyzer:
 
-![NEC_protocol.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_NEC.png)
+![NEC_protocol.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_NEC.png)
 
 If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5us burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
 
