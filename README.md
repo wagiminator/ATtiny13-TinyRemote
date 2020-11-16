@@ -65,12 +65,12 @@ void sendByte(uint8_t value){
 }
 
 // send complete code (address + command) via IR
-void sendCode(uint8_t code){
+void sendCode(uint8_t cmd){
   startPulse();       // 9ms burst + 4.5ms pause to signify start of transmission
   sendByte(ADDR);     // send address byte
   sendByte(~ADDR);    // send inverse of address byte
-  sendByte(code);     // send code byte
-  sendByte(~code);    // send inverse of code byte
+  sendByte(cmd);      // send command byte
+  sendByte(~cmd);     // send inverse of command byte
   normalPulse();      // 562us burst to signify end of transmission
 }
 ```
@@ -110,6 +110,7 @@ set_sleep_mode(SLEEP_MODE_PWR_DOWN);  // set sleep mode to power down
 ![pic1.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic1.jpg)
 
 # References, Links and Notes
-- [NEC infrared transmission protocol (altium.com)](https://techdocs.altium.com/display/FPGA/NEC+Infrared+Transmission+Protocol)
-- [NEC protocol explanation by David Johnson-Davies](http://www.technoblogy.com/show?UVE)
+- [IR remote control explanations by San Bergmans](https://www.sbprojects.net/knowledge/ir/index.php)
 - [IR remote control by Christoph Niessen (german)](http://chris.cnie.de/avr/tcm231421.html)
+- [IR remote control detective by David Johnson-Davies](http://www.technoblogy.com/show?24A9)
+- [NEC infrared transmission protocol (altium.com)](https://techdocs.altium.com/display/FPGA/NEC+Infrared+Transmission+Protocol)
