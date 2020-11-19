@@ -57,7 +57,7 @@ IR message starts with a 9ms leading burst followed by a 4.5ms pause. Afterwards
 #define bit1Pause()     _delay_us(1120) // 1687.5us - 562.5us = 1125us
 
 // send a single byte via IR
-void sendByte(uint8_t value){
+void sendByte(uint8_t value) {
   for (uint8_t i=8; i; i--, value>>=1) {  // send 8 bits, LSB first
     normalPulse();                        // 562us burst, 562us pause
     if (value & 1) bit1Pause();           // extend pause if bit is 1
@@ -65,7 +65,7 @@ void sendByte(uint8_t value){
 }
 
 // send complete code (address + command) via IR
-void sendCode(uint8_t cmd){
+void sendCode(uint8_t cmd) {
   startPulse();       // 9ms burst + 4.5ms pause to signify start of transmission
   sendByte(ADDR);     // send address byte
   sendByte(~ADDR);    // send inverse of address byte
@@ -79,7 +79,7 @@ The Extended NEC protocol uses 16-bit addresses. Instead of sending an 8-bit add
 
 ```c
 // send complete code (address + command) via IR (Extended NEC)
-void sendCode(uint8_t cmd){
+void sendCode(uint8_t cmd) {
   startPulse();           // 9ms burst + 4.5ms pause to signify start of transmission
   sendByte(ADDR & 0xFF);  // send address low byte
   sendByte(ADDR >> 8);    // send address high byte

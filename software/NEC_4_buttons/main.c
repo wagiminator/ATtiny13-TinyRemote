@@ -88,7 +88,7 @@
 
 
 // send a single byte via IR
-void sendByte(uint8_t value){
+void sendByte(uint8_t value) {
   for (uint8_t i=8; i; i--, value>>=1) {  // send 8 bits, LSB first
     normalPulse();                        // 562us burst, 562us pause
     if (value & 1) bit1Pause();           // extend pause if bit is 1
@@ -96,7 +96,7 @@ void sendByte(uint8_t value){
 }
 
 // send complete code (address + command) via IR
-void sendCode(uint8_t cmd){
+void sendCode(uint8_t cmd) {
   startPulse();             // 9ms burst + 4.5ms pause to signify start of transmission
   #if ADDR > 0xFF           // if extended NEC protocol (16-bit address):
     sendByte(ADDR & 0xFF);  // send address low byte
@@ -111,7 +111,7 @@ void sendCode(uint8_t cmd){
 }
 
 // main function
-int main(void){
+int main(void) {
   // set oscillator calibration value
   #ifdef OSCCAL_VAL
     OSCCAL = OSCCAL_VAL;                // set the value if defined above
