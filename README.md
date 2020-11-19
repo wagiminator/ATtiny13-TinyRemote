@@ -75,6 +75,20 @@ void sendCode(uint8_t cmd){
 }
 ```
 
+The Extended NEC protocol uses 16-bit addresses. Instead of sending an 8-bit address and its logically inverse, first the low byte and then the high byte of the address is transmitted.
+
+```c
+// send complete code (address + command) via IR (Extended NEC)
+void sendCode(uint8_t cmd){
+  startPulse();           // 9ms burst + 4.5ms pause to signify start of transmission
+  sendByte(ADDR & 0xFF);  // send address low byte
+  sendByte(ADDR >> 8);    // send address high byte
+  sendByte(cmd);          // send command byte
+  sendByte(~cmd);         // send inverse of command byte
+  normalPulse();          // 562us burst to signify end of transmission
+}
+```
+
 Here's the result, captured with a logic analyzer:
 
 ![NEC_protocol.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_NEC.png)

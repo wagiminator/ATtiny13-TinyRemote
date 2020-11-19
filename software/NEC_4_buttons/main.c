@@ -19,6 +19,10 @@
 // - the 8-bit logical inverse of the address,
 // - the 8-bit command and
 // - the 8-bit logical inverse of the command.
+// The Extended NEC protocol uses 16-bit addresses. Instead of sending an
+// 8-bit address and its logically inverse, first the low byte and then the
+// high byte of the address is transmitted.
+//
 // If the key on the remote controller is kept depressed, a repeat code
 // will be issued consisting of a 9ms leading burst, a 2.25ms pause and
 // a 562.5us burst to mark the end. The repeat code will continue to be
@@ -45,8 +49,10 @@
 // Project Files (Github):  https://github.com/wagiminator
 // License: http://creativecommons.org/licenses/by-sa/3.0/
 //
-// Based on the work of Christoph Niessen (http://chris.cnie.de/avr/tcm231421.html)
-// and David Johnson-Davies (http://www.technoblogy.com/show?UVE)
+// Based on the work of:
+// - San Bergmans (https://www.sbprojects.net/knowledge/ir/index.php),
+// - Christoph Niessen (http://chris.cnie.de/avr/tcm231421.html),
+// - David Johnson-Davies (http://www.technoblogy.com/show?UVE).
 
 
 // oscillator calibration value (uncomment and set if necessary)
@@ -58,12 +64,12 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-// IR codes
-#define ADDR  0x04  // Address of LG TV
-#define KEY1  0x02  // Volume+
-#define KEY2  0x00  // Channel+
-#define KEY3  0x03  // Volume-
-#define KEY4  0x01  // Channel-
+// IR codes (use 16-bit address for extended NEC protocol)
+#define ADDR  0x04  // Address: LG TV
+#define KEY1  0x02  // Command: Volume+
+#define KEY2  0x00  // Command: Channel+
+#define KEY3  0x03  // Command: Volume-
+#define KEY4  0x01  // Command: Channel-
 
 // define values for 38kHz PWM frequency and 25% duty cycle
 #define TOP   31                      // 1200kHz / 38kHz - 1 = 31
@@ -90,13 +96,18 @@ void sendByte(uint8_t value){
 }
 
 // send complete code (address + command) via IR
-void sendCode(uint8_t code){
-  startPulse();       // 9ms burst + 4.5ms pause to signify start of transmission
-  sendByte(ADDR);     // send address byte
-  sendByte(~ADDR);    // send inverse of address byte
-  sendByte(code);     // send code byte
-  sendByte(~code);    // send inverse of code byte
-  normalPulse();      // 562us burst to signify end of transmission
+void sendCode(uint8_t cmd){
+  startPulse();             // 9ms burst + 4.5ms pause to signify start of transmission
+  #if ADDR > 0xFF           // if extended NEC protocol (16-bit address):
+    sendByte(ADDR & 0xFF);  // send address low byte
+    sendByte(ADDR >> 8);    // send address high byte
+  #else                     // if standard NEC protocol (8-bit address):
+    sendByte(ADDR);         // send address byte
+    sendByte(~ADDR);        // send inverse of address byte
+  #endif
+  sendByte(cmd);            // send command byte
+  sendByte(~cmd);           // send inverse of command byte
+  normalPulse();            // 562us burst to signify end of transmission
 }
 
 // main function

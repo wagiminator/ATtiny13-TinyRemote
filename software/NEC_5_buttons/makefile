@@ -1,4 +1,4 @@
-# Project:  tinyRemote
+# Project:  tinyRemote - 5 buttons
 # Author:   Stefan Wagner
 # Year:     2019
 # URL:      https://easyeda.com/wagiminator
