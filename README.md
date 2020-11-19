@@ -11,7 +11,7 @@ The wiring is pretty simple:
 
 ![Wiring.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_wiring.png)
 
-If you want to use only four buttons, you can leave KEY5 unsoldered and upload the 4-button version of the firmware. If you want to use all five buttons, you have to disable RESET on PB5 by burning the respective fuses:
+Due to the control with a high-frequency PWM, no series resistor is necessary for the LEDs. If you want to use only four buttons, you can leave KEY5 unsoldered and upload the 4-button version of the firmware. If you want to use all five buttons, you have to disable RESET on PB5 by burning the respective fuses after uploading the 5-button version of the firmware:
 
 ```
 avrdude -c usbasp -p t13 -U lfuse:w:0x2a:m -U hfuse:w:0xfe:m
