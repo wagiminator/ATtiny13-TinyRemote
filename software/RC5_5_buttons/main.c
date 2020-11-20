@@ -70,6 +70,7 @@
 #define KEY2  0x11  // Command: Channel+
 #define KEY3  0x0E  // Command: Volume-
 #define KEY4  0x12  // Command: Channel-
+#define KEY5  0x0B  // Command: Standby
 
 // define values for 36kHz PWM frequency and 25% duty cycle
 #define TOP   32                      // 1200kHz / 36kHz - 1 = 32
