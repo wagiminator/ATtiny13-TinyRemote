@@ -1,8 +1,9 @@
 // tinyIRremote for ATtiny13A - NEC, 4 Buttons
 // 
-// IR remote control using an ATtiny 13A. Timer 0 generates a 38kHz
-// pulse frequency with a duty cycle of 25% on the output pin to the IR LED.
-// The signal (NEC protocol) is modulated by toggling the pin to input/output.
+// IR remote control using an ATtiny 13A. Timer0 generates a 38kHz
+// carrier frequency with a duty cycle of 25% on the output pin to the
+// IR LED. The signal (NEC protocol) is modulated by toggling the pin
+// to input/output. The protocol uses pulse distance modulation.
 //
 //       +---------+     +-+ +-+   +-+   +-+ +-
 //       |         |     | | | |   | |   | | |     bit0:  562.5us

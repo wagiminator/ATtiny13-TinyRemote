@@ -1,33 +1,28 @@
-// tinyIRremote for ATtiny13A - NEC, 5 Buttons
+// tinyIRremote for ATtiny13A - RC-5, 5 Buttons
 // 
-// IR remote control using an ATtiny 13A. Timer0 generates a 38kHz
+// IR remote control using an ATtiny 13A. Timer0 generates a 36kHz
 // carrier frequency with a duty cycle of 25% on the output pin to the
-// IR LED. The signal (NEC protocol) is modulated by toggling the pin
-// to input/output. The protocol uses pulse distance modulation.
+// IR LED. The signal (RC-5 protocol) is modulated by toggling the pin
+// to input/output. The protocol uses bi-phase modulation (Manchester
+// coding).
 //
-//       +---------+     +-+ +-+   +-+   +-+ +-
-//       |         |     | | | |   | |   | | |     bit0:  562.5us
-//       |   9ms   |4.5ms| |0| | 1 | | 1 | |0| ...
-//       |         |     | | | |   | |   | | |     bit1: 1687.5us
-// ------+         +-----+ +-+ +---+ +---+ +-+
+//   +-------+                     +-------+
+//           |                     |
+//     889us | 889us         889us | 889us
+//           |                     |
+//           +-------+     +-------+
 //
-// IR message starts with a 9ms leading burst followed by a 4.5ms pause.
-// Afterwards 4 data bytes are transmitted, least significant bit first.
-// A "0" bit is a 562.5us burst followed by a 562.5us pause, a "1" bit is
-// a 562.5us burst followed by a 1687.5us pause. A final 562.5us burst
-// signifies the end of the transmission. The four data bytes are in order:
-// - the 8-bit address for the receiving device,
-// - the 8-bit logical inverse of the address,
-// - the 8-bit command and
-// - the 8-bit logical inverse of the command.
-// The Extended NEC protocol uses 16-bit addresses. Instead of sending an
-// 8-bit address and its logically inverse, first the low byte and then the
-// high byte of the address is transmitted.
+//   |<-- Bit "0" -->|     |<-- Bit "1" -->|
 //
-// If the key on the remote controller is kept depressed, a repeat code
-// will be issued consisting of a 9ms leading burst, a 2.25ms pause and
-// a 562.5us burst to mark the end. The repeat code will continue to be
-// sent out at 108ms intervals, until the key is finally released.
+// IR message starts with two start bits. The first bit is always "1",
+// the second bit is "1" in the original protocol and inverted 7th bit
+// of the command in the extended RC-5 protocol. The third bit toggles
+// after each button release. The next five bits represent the device
+// address, MSB first and the last six bits represent the command, MSB
+// first.
+//
+// As long as a key remains down the message will be repeated every 114ms
+// without changing the toggle bit.
 //
 // The code utilizes the sleep mode power down function. The device will
 // work several months on a CR2032 battery.
@@ -72,51 +67,53 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-// IR codes (use 16-bit address for extended NEC protocol)
-#define ADDR  0x04  // Address: LG TV
-#define KEY1  0x02  // Command: Volume+
-#define KEY2  0x00  // Command: Channel+
-#define KEY3  0x03  // Command: Volume-
-#define KEY4  0x01  // Command: Channel-
-#define KEY5  0x08  // Command: Power
+// IR codes
+#define ADDR  0x00  // Address: Philips TV
+#define KEY1  0x0D  // Command: Volume+
+#define KEY2  0x11  // Command: Channel+
+#define KEY3  0x0E  // Command: Volume-
+#define KEY4  0x12  // Command: Channel-
 
-// define values for 38kHz PWM frequency and 25% duty cycle
-#define TOP   31                      // 1200kHz / 38kHz - 1 = 31
-#define DUTY  7                       // 1200kHz / 38kHz / 4 - 1 = 7
+// define values for 36kHz PWM frequency and 25% duty cycle
+#define TOP   32                      // 1200kHz / 36kHz - 1 = 32
+#define DUTY  7                       // 1200kHz / 36kHz / 4 - 1 = 7
 
 // macros to switch on/off IR LED
-#define IRon()   DDRB |= 0b00000010   // PB1 as output = IR at OC0B (38 kHz)
+#define IRon()   DDRB |= 0b00000010   // PB1 as output = IR at OC0B (36 kHz)
 #define IRoff()  DDRB &= 0b11111101   // PB1 as input  = LED off
 
-// macros to modulate the signals according to NEC protocol with compensated timings
-#define startPulse()    {IRon(); _delay_us(9000); IRoff(); _delay_us(4500);}
-#define repeatPulse()   {IRon(); _delay_us(9000); IRoff(); _delay_us(2250);}
-#define normalPulse()   {IRon(); _delay_us( 562); IRoff(); _delay_us( 557);}
-#define bit1Pause()     _delay_us(1120) // 1687.5us - 562.5us = 1125us
-#define repeatCode()    {_delay_ms(40); repeatPulse(); normalPulse(); _delay_ms(56);}
+// macros to modulate the signals according to RC-5 protocol with compensated timings
+#define bit0Pulse()     {IRon();  _delay_us(889); IRoff(); _delay_us(884);}
+#define bit1Pulse()     {IRoff(); _delay_us(889); IRon();  _delay_us(884);}
+#define repeatDelay()   _delay_ms(89) // 114ms - 14 * 2 * 889us
 
+// bitmasks
+#define startBit  0b0010000000000000
+#define cmdBit7   0b0001000000000000
+#define toggleBit 0b0000100000000000
 
-// send a single byte via IR
-void sendByte(uint8_t value) {
-  for (uint8_t i=8; i; i--, value>>=1) {  // send 8 bits, LSB first
-    normalPulse();                        // 562us burst, 562us pause
-    if (value & 1) bit1Pause();           // extend pause if bit is 1
-  }
-}
+// toggle variable
+uint8_t toggle = 0;
 
-// send complete code (address + command) via IR
+// send complete message (startbits + togglebit + address + command) via IR
 void sendCode(uint8_t cmd) {
-  startPulse();             // 9ms burst + 4.5ms pause to signify start of transmission
-  #if ADDR > 0xFF           // if extended NEC protocol (16-bit address):
-    sendByte(ADDR & 0xFF);  // send address low byte
-    sendByte(ADDR >> 8);    // send address high byte
-  #else                     // if standard NEC protocol (8-bit address):
-    sendByte(ADDR);         // send address byte
-    sendByte(~ADDR);        // send inverse of address byte
-  #endif
-  sendByte(cmd);            // send command byte
-  sendByte(~cmd);           // send inverse of command byte
-  normalPulse();            // 562us burst to signify end of transmission
+  // prepare the message
+  uint16_t message = ADDR << 6;         // shift address to the right position
+  message |= (cmd & 0x3f);              // add the low 6 bits of the command
+  if (~cmd & 0x40) message |= cmdBit7;  // add inverse of 7th command bit
+  message |= startBit;                  // add start bit
+  if (toggle) message |= toggleBit;     // add toggle bit
+
+  // send the message
+  do {
+    uint16_t bitmask = startBit;        // set the bitmask to first bit to send
+    for(uint8_t i=14; i; i--, bitmask>>=1) {                // 14 bits, MSB first
+      (message & bitmask) ? (bit1Pulse()) : (bit0Pulse());  // send the bit
+    }
+    IRoff();                            // switch off IR LED
+    repeatDelay();                      // wait for next repeat
+  } while(~PINB & 0b00111101);          // repeat sending until button is released
+  toggle ^= 1;                          // toggle the toggle bit
 }
 
 // main function
@@ -160,7 +157,6 @@ int main(void) {
       case 0b00100000: sendCode(KEY5); break;
       default: break;
     }
-    while (~PINB & 0b00111101) repeatCode();  // send repeat command until button is released
   }
 }
 

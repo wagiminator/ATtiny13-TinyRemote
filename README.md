@@ -1,5 +1,5 @@
 # TinyRemote - IR Remote Control based on ATtiny13A
-TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or LIR2032 coin cell battery. The code is a full implementation of the NEC protocol using only 370 bytes (36%) of program memory.
+TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or LIR2032 coin cell battery.
 
 - Project Video: https://youtu.be/ad3eyNCov9c
 - Project on EasyEDA: https://easyeda.com/wagiminator/attiny13-tinyremote
@@ -20,7 +20,7 @@ avrdude -c usbasp -p t13 -U lfuse:w:0x2a:m -U hfuse:w:0xfe:m
 Warning: You will need a high voltage fuse resetter to undo this change!
 
 # Software
-Timer 0 generates a 38kHz pulse frequency with a duty cycle of 25% on the output pin to the IR LED. The signal (NEC protocol) is modulated by toggling the pin to input/output.
+Timer0 generates a 38kHz carrier frequency with a duty cycle of 25% on the output pin to the IR LED. The message (NEC protocol) is modulated by toggling the pin to input/output. The protocol uses pulse distance modulation.
 
 ```c
 // define values for 38kHz PWM frequency and 25% duty cycle
