@@ -121,6 +121,33 @@ If the key on the remote controller is kept depressed, a repeat code will be iss
 while (~PINB & 0b00111101) repeatCode();
 ```
 
+The main loop of the implementation is pretty simple:
+
+```c
+// IR codes (use 16-bit address for extended NEC protocol)
+#define ADDR  0x04  // Address: LG TV
+#define KEY1  0x02  // Command: Volume+
+#define KEY2  0x00  // Command: Channel+
+#define KEY3  0x03  // Command: Volume-
+#define KEY4  0x01  // Command: Channel-
+#define KEY5  0x08  // Command: Power
+
+// main loop
+while(1) {
+    sleep_mode();                             // sleep until button is pressed
+    _delay_ms(1);                             // debounce
+    uint8_t buttons = ~PINB & 0b00111101;     // read button pins
+    switch (buttons) {                        // send corresponding IR code
+      case 0b00000001: sendCode(KEY1); break;
+      case 0b00000100: sendCode(KEY2); break;
+      case 0b00001000: sendCode(KEY3); break;
+      case 0b00010000: sendCode(KEY4); break;
+      case 0b00100000: sendCode(KEY5); break;
+      default: break;
+    }
+}
+```
+
 ## Implementation of the Philips RC-5 Protocol
 The Philips RC-5 protocol uses Manchester encoding on a carrier frequency of 36kHz. A "0" bit is an 889us burst followed by an 889us space, a "1" bit is an 889us space followed by an 889us burst. An IR telegram starts with two start bits. The first bit is always "1", the second bit is "1" in the original protocol and the inverted 7th bit of the command in the extended RC-5 protocol. The third bit toggles after each button release. The next five bits represent the device address and the last six bits represent the command, all transmitted MSB first.
 
