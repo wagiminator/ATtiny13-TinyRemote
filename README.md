@@ -26,9 +26,9 @@ There are a variety of communication protocols for infrared remote controls. Bas
 
 |Protocol|Carrier Frequency|Encoding Method|Start Frame|Address|Command|
 |-|-|-|-|-|-|
-|NEC|38kHz|Pulse Distance|9ms burst/4.5ms space|8/16 bits|8 bits|
+|NEC|38kHz|Pulse Distance|9ms burst / 4.5ms space|8/16 bits|8 bits|
 |RC-5|36kHz|Manchester|Start bits|5 bits|6/7 bits|
-|Sony SIRC|40kHz|Pulse Length|2.4ms burst/0.6ms space|5/8 bits|7 bits|
+|Sony SIRC|40kHz|Pulse Length|2.4ms burst / 0.6ms space|5/8 bits|7 bits|
 
 Since the software implementation for all protocols is very similar, only the NEC protocol is explained in more detail below.
 
