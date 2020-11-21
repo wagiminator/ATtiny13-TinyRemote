@@ -33,7 +33,7 @@ There are a variety of communication protocols for infrared remote controls. Bas
 Since the software implementation for all protocols is very similar, only the NEC protocol is explained in more detail below.
 
 ## Implementation of the NEC Protocol
-Timer0 generates a 38kHz carrier frequency with a duty cycle of 25% on the output pin to the IR LED. The message (NEC protocol) is modulated by toggling the pin to input/output. The protocol uses pulse distance encoding.
+Timer0 generates the 38kHz carrier frequency with a duty cycle of 25% on the output pin to the IR LED.
 
 ```c
 // define values for 38kHz PWM frequency and 25% duty cycle
@@ -51,7 +51,9 @@ Here's the result, captured with a logic analyzer:
 
 ![PWM.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_PWM.png)
 
-IR message starts with a 9ms leading burst followed by a 4.5ms space. Afterwards 4 data bytes are transmitted, least significant bit first. A "0" bit is a 562.5us burst followed by a 562.5us space, a "1" bit is a 562.5us burst followed by a 1687.5us space. A final 562.5us burst signifies the end of the transmission. The four data bytes are in order:
+The message is modulated by toggling the pin of the IR LED to input or output. Setting the pin to output enables the PWM on this pin and sends a burst of the carrier wave. Setting the pin to input turns off the LED completely. The NEC protocol uses pulse distance encoding, which means a data bit is defined by the time between the bursts. A "0" bit is a 562.5us burst (LED on: 38kHz PWM) followed by a 562.5us space (LED off), a "1" bit is a 562.5us burst followed by a 1687.5us space.
+
+IR message starts with a 9ms leading burst followed by a 4.5ms space. Afterwards 4 data bytes are transmitted, least significant bit first. A final 562.5us burst signifies the end of the transmission. The four data bytes are in order:
 - the 8-bit address for the receiving device,
 - the 8-bit logical inverse of the address,
 - the 8-bit command and
@@ -120,7 +122,7 @@ while (~PINB & 0b00111101) repeatCode();
 ```
 
 ## Implementation of the Philips RC-5 Protocol
-The Philips RC-5 protocol uses Manchester encoding of the message bits. Each pulse burst is 889us in length, at a carrier frequency of 36kHz. A "0" bit is an 889us burst followed by an 889us space, a "1" bit is an 889us space followed by an 889us burst. IR message starts with two start bits. The first bit is always "1", the second bit is "1" in the original protocol and the inverted 7th bit of the command in the extended RC-5 protocol. The third bit toggles after each button release. The next five bits represent the device address, MSB first and the last six bits represent the command, MSB first.
+The Philips RC-5 protocol uses Manchester encoding on a carrier frequency of 36kHz. A "0" bit is an 889us burst followed by an 889us space, a "1" bit is an 889us space followed by an 889us burst. IR message starts with two start bits. The first bit is always "1", the second bit is "1" in the original protocol and the inverted 7th bit of the command in the extended RC-5 protocol. The third bit toggles after each button release. The next five bits represent the device address and the last six bits represent the command, all transmitted MSB first.
 
 ![RC5_transmission.png](https://techdocs.altium.com/sites/default/files/wiki_attachments/296330/RC5MessageFrame.png)
 
