@@ -194,7 +194,7 @@ void sendCode(uint8_t cmd) {
     }
     IRoff();                            // switch off IR LED
     repeatDelay();                      // wait for next repeat
-  } while(~PINB & 0b00011101);          // repeat sending until button is released
+  } while(~PINB & 0b00111101);          // repeat sending until button is released
   toggle ^= 1;                          // toggle the toggle bit
 }
 ```
