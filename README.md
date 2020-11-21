@@ -181,7 +181,7 @@ The Sony SIRC protocol uses pulse length encoding on a carrier frequency of 40kH
 As long as a key remains down the telegram will be repeated every 45ms.
 
 ## Power Saving
-The code utilizes the sleep mode power down function. It wakes up on every button press by pin change interrupt. The device will work several months on a CR2032 battery.
+The code shuts down unused peripherals and utilizes the sleep mode power down function. It wakes up on every button press by pin change interrupt. The device will work several months on a CR2032 battery.
 
 ```c
 // setup pin change interrupt
