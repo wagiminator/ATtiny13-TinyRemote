@@ -11,7 +11,7 @@
 //       |         |     | | | |   | |   | | |     bit1: 1687.5us
 // ------+         +-----+ +-+ +---+ +---+ +-+
 //
-// IR message starts with a 9ms leading burst followed by a 4.5ms pause.
+// IR telegram starts with a 9ms leading burst followed by a 4.5ms pause.
 // Afterwards 4 data bytes are transmitted, least significant bit first.
 // A "0" bit is a 562.5us burst followed by a 562.5us pause, a "1" bit is
 // a 562.5us burst followed by a 1687.5us pause. A final 562.5us burst
@@ -96,7 +96,7 @@ void sendByte(uint8_t value) {
   }
 }
 
-// send complete code (address + command) via IR
+// send complete telegram (start frame + address + command) via IR
 void sendCode(uint8_t cmd) {
   startPulse();             // 9ms burst + 4.5ms pause to signify start of transmission
   #if ADDR > 0xFF           // if extended NEC protocol (16-bit address):

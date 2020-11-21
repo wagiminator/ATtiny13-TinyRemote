@@ -14,15 +14,15 @@
 //
 //   |<-- Bit "0" -->|     |<-- Bit "1" -->|
 //
-// IR message starts with two start bits. The first bit is always "1",
+// IR telegram starts with two start bits. The first bit is always "1",
 // the second bit is "1" in the original protocol and inverted 7th bit
 // of the command in the extended RC-5 protocol. The third bit toggles
 // after each button release. The next five bits represent the device
 // address, MSB first and the last six bits represent the command, MSB
 // first.
 //
-// As long as a key remains down the message will be repeated every 114ms
-// without changing the toggle bit.
+// As long as a key remains down the telegram will be repeated every
+// 114ms without changing the toggle bit.
 //
 // The code utilizes the sleep mode power down function. The device will
 // work several months on a CR2032 battery.
@@ -91,7 +91,7 @@
 // toggle variable
 uint8_t toggle = 0;
 
-// send complete message (startbits + togglebit + address + command) via IR
+// send complete telegram (startbits + togglebit + address + command) via IR
 void sendCode(uint8_t cmd) {
   // prepare the message
   uint16_t message = ADDR << 6;         // shift address to the right position
