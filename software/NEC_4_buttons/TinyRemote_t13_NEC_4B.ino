@@ -5,11 +5,11 @@
 // IR LED. The signal (NEC protocol) is modulated by toggling the pin
 // to input/output. The protocol uses pulse distance modulation.
 //
-//       +---------+     +-+ +-+   +-+   +-+ +-
-//       |         |     | | | |   | |   | | |     bit0:  562.5us
+//       +---------+     +-+ +-+   +-+   +-+ +-    ON
+//       |         |     | | | |   | |   | | |          bit0:  562.5us
 //       |   9ms   |4.5ms| |0| | 1 | | 1 | |0| ...
-//       |         |     | | | |   | |   | | |     bit1: 1687.5us
-// ------+         +-----+ +-+ +---+ +---+ +-+
+//       |         |     | | | |   | |   | | |          bit1: 1687.5us
+// ------+         +-----+ +-+ +---+ +---+ +-+     OFF
 //
 // IR telegram starts with a 9ms leading burst followed by a 4.5ms pause.
 // Afterwards 4 data bytes are transmitted, least significant bit first.

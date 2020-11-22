@@ -207,6 +207,48 @@ The Sony SIRC protocol uses pulse length encoding on a carrier frequency of 40kH
 
 As long as a key remains down the telegram will be repeated every 45ms.
 
+```c
+// define values for 40kHz PWM frequency and 25% duty cycle
+#define TOP   29                      // 1200kHz / 40kHz - 1 = 29
+#define DUTY  7                       // 1200kHz / 40kHz / 4 - 1 = 7
+
+// macros to switch on/off IR LED
+#define IRon()   DDRB |= 0b00000010   // PB1 as output = IR at OC0B (40kHz)
+#define IRoff()  DDRB &= 0b11111101   // PB1 as input  = LED off
+
+// macros to modulate the signals according to SONY protocol with compensated timings
+#define startPulse()    {IRon(); _delay_us(2400); IRoff(); _delay_us( 595);}
+#define bit0Pulse()     {IRon(); _delay_us( 600); IRoff(); _delay_us( 595);}
+#define bit1Pulse()     {IRon(); _delay_us(1200); IRoff(); _delay_us( 595);}
+#define repeatPause()   _delay_ms(27)
+
+
+// send "number" of bits of "value" via IR
+void sendByte(uint8_t value, uint8_t number) {
+  do {                                    // send number of bits, LSB first
+    (value & 1) ? (bit1Pulse()) : (bit0Pulse());  // send bit
+    value>>=1;                            // next bit
+  } while(--number);
+}
+
+// send complete telegram (start frame + command + address) via IR
+void sendCode(uint8_t cmd) {
+  do {
+    startPulse();               // signify start of transmission
+    sendByte(cmd, 7);           // send 7 command bits
+    #if BITS == 12              // if 12-bit version:
+      sendByte(ADDR, 5);        // send 5 address bits
+    #elif BITS == 15            // if 15-bit version:
+      sendByte(ADDR, 8);        // send 8 address bits
+    #elif BITS == 20            // if 20-bit version:
+      sendByte(ADDR, 5);        // send 5 address bits
+      sendByte(EXTB, 8);        // send 8 extended bits
+    #endif
+    repeatPause();              // wait until next repeat
+  } while (~PINB & 0b00011101); // repeat sending until button is released
+}
+```
+
 ## Power Saving
 The code shuts down unused peripherals and utilizes the sleep mode power down function. It wakes up on every button press by pin change interrupt. The device will work several months on a CR2032 battery.
 

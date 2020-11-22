@@ -6,11 +6,11 @@
 // to input/output. The protocol uses bi-phase modulation (Manchester
 // coding).
 //
-//   +-------+                     +-------+
+//   +-------+                     +-------+    ON
 //           |                     |
 //     889us | 889us         889us | 889us
 //           |                     |
-//           +-------+     +-------+
+//           +-------+     +-------+            OFF
 //
 //   |<-- Bit "0" -->|     |<-- Bit "1" -->|
 //
