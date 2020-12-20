@@ -272,4 +272,5 @@ set_sleep_mode(SLEEP_MODE_PWR_DOWN);  // set sleep mode to power down
 2. [IR remote control by Christoph Niessen (german)](http://chris.cnie.de/avr/tcm231421.html)
 3. [IR remote control detective by David Johnson-Davies](http://www.technoblogy.com/show?24A9)
 4. [Infrared communication concepts (altium.com)](https://techdocs.altium.com/display/FPGA/Infrared+Communication+Concepts)
-5. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
+5. [NEC decoder based on  ATtiny13A](https://github.com/wagiminator/ATtiny13-TinyDecoder)
+6. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
