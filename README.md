@@ -265,6 +265,14 @@ PRR    = 0b00000001;                  // shut down ADC
 set_sleep_mode(SLEEP_MODE_PWR_DOWN);  // set sleep mode to power down
 ```
 
+## Timing Accuracy
+The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the factory calibration. Usually this is sufficient for an infrared remote control. Slight deviations in timing are tolerated by the receiver, since cheap remote controls are usually not more accurate. Nevertheless, it certainly doesn't hurt to [manually calibrate](https://github.com/wagiminator/ATtiny84-TinyCalibrator) the internal oscillator and set the corresponding OSCCAL value at the beginning of the code.
+
+```c
+// oscillator calibration value (uncomment and set if necessary)
+#define OSCCAL_VAL  0x48
+```
+
 ![pic1.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic1.jpg)
 
 # References, Links and Notes
