@@ -4,7 +4,7 @@ TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or 
 - Project Video (YouTube): https://youtu.be/ad3eyNCov9c
 - Project Files (EasyEDA): https://easyeda.com/wagiminator/attiny13-tinyremote
 
-![IMG_20200105_115938_x.jpeg](https://image.easyeda.com/pullimage/VIS5ZlaEejDmMenv7sVxYe85p3RsQkphLDLCliZ2.jpeg)
+![pic2.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic2.jpg)
 
 # Hardware
 The wiring is pretty simple:
@@ -281,4 +281,6 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 3. [IR remote control detective by David Johnson-Davies](http://www.technoblogy.com/show?24A9)
 4. [Infrared communication concepts (altium.com)](https://techdocs.altium.com/display/FPGA/Infrared+Communication+Concepts)
 5. [NEC decoder based on  ATtiny13A](https://github.com/wagiminator/ATtiny13-TinyDecoder)
-6. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
+6. [Tiny Remote RF](https://github.com/wagiminator/ATtiny13-TinyRemoteRF)
+7. [OSC Calibrator](https://github.com/wagiminator/ATtiny84-TinyCalibrator)
+8. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
