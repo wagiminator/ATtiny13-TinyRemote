@@ -4,12 +4,12 @@ TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or 
 - Project Video (YouTube): https://youtu.be/ad3eyNCov9c
 - Project Files (EasyEDA): https://easyeda.com/wagiminator/attiny13-tinyremote
 
-![pic1.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic1.jpg)
+![pic1.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic1.jpg)
 
 # Hardware
 The wiring is pretty simple:
 
-![Wiring.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_wiring.png)
+![Wiring.png](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_wiring.png)
 
 Due to the control with a high-frequency PWM, no series resistor is necessary for the LEDs. If you want to use only four buttons, you can leave KEY5 unsoldered and upload the 4-button version of the firmware. If you want to use all five buttons, you have to disable RESET on PB5 by burning the respective fuses after uploading the 5-button version of the firmware:
 
@@ -49,7 +49,7 @@ OCR0B  = DUTY;            // 25 % duty cycle
 
 Here's the result, captured with a logic analyzer:
 
-![PWM.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_PWM.png)
+![PWM.png](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_PWM.png)
 
 The IR telegram is modulated by toggling the pin of the IR LED to input or output. Setting the pin to output enables the PWM on this pin and sends a burst of the carrier wave. Setting the pin to input turns off the LED completely. The NEC protocol uses pulse distance encoding, which means a data bit is defined by the time between the bursts. A "0" bit is a 562.5us burst (LED on: 38kHz PWM) followed by a 562.5us space (LED off), a "1" bit is a 562.5us burst followed by a 1687.5us space.
 
@@ -106,7 +106,7 @@ void sendCode(uint8_t cmd) {
 
 Here's the result, captured with a logic analyzer:
 
-![NEC_protocol.png](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_NEC.png)
+![NEC_protocol.png](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_NEC.png)
 
 If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5us burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
 
@@ -273,8 +273,8 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 #define OSCCAL_VAL  0x48
 ```
 
-![pic2.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic2.jpg)
-![pic3.jpg](https://github.com/wagiminator/ATtiny13-TinyRemote/blob/master/documentation/TinyRemote_pic3.jpg)
+![pic2.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic2.jpg)
+![pic3.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic3.jpg)
 
 # References, Links and Notes
 1. [IR remote control explanations by San Bergmans](https://www.sbprojects.net/knowledge/ir/index.php)
