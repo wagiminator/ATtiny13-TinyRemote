@@ -273,9 +273,6 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 #define OSCCAL_VAL  0x48
 ```
 
-![pic2.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic2.jpg)
-![pic3.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic3.jpg)
-
 # References, Links and Notes
 1. [IR remote control explanations by San Bergmans](https://www.sbprojects.net/knowledge/ir/index.php)
 2. [IR remote control by Christoph Niessen (german)](http://chris.cnie.de/avr/tcm231421.html)
@@ -285,6 +282,9 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 6. [Tiny Remote RF](https://github.com/wagiminator/ATtiny13-TinyRemoteRF)
 7. [OSC Calibrator](https://github.com/wagiminator/ATtiny84-TinyCalibrator)
 8. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
+
+![pic2.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic2.jpg)
+![pic3.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic3.jpg)
 
 # License
 ![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
