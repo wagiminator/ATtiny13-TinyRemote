@@ -2,7 +2,7 @@
 TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or LIR2032 coin cell battery.
 
 - Project Video (YouTube): https://youtu.be/ad3eyNCov9c
-- Project Files (EasyEDA): https://easyeda.com/wagiminator/attiny13-tinyremote
+- Design Files (EasyEDA): https://easyeda.com/wagiminator/attiny13-tinyremote
 
 ![pic1.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic1.jpg)
 
@@ -51,9 +51,9 @@ Here's the result, captured with a logic analyzer:
 
 ![PWM.png](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_PWM.png)
 
-The IR telegram is modulated by toggling the pin of the IR LED to input or output. Setting the pin to output enables the PWM on this pin and sends a burst of the carrier wave. Setting the pin to input turns off the LED completely. The NEC protocol uses pulse distance encoding, which means a data bit is defined by the time between the bursts. A "0" bit is a 562.5us burst (LED on: 38kHz PWM) followed by a 562.5us space (LED off), a "1" bit is a 562.5us burst followed by a 1687.5us space.
+The IR telegram is modulated by toggling the pin of the IR LED to input or output. Setting the pin to output enables the PWM on this pin and sends a burst of the carrier wave. Setting the pin to input turns off the LED completely. The NEC protocol uses pulse distance encoding, which means a data bit is defined by the time between the bursts. A "0" bit is a 562.5µs burst (LED on: 38kHz PWM) followed by a 562.5µs space (LED off), a "1" bit is a 562.5µs burst followed by a 1687.5µs space.
 
-An IR telegram starts with a 9ms leading burst followed by a 4.5ms space. Afterwards 4 data bytes are transmitted, least significant bit first. A final 562.5us burst signifies the end of the transmission. The four data bytes are in order:
+An IR telegram starts with a 9ms leading burst followed by a 4.5ms space. Afterwards 4 data bytes are transmitted, least significant bit first. A final 562.5µs burst signifies the end of the transmission. The four data bytes are in order:
 - the 8-bit address for the receiving device,
 - the 8-bit logical inverse of the address,
 - the 8-bit command and
@@ -108,7 +108,7 @@ Here's the result, captured with a logic analyzer:
 
 ![NEC_protocol.png](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_NEC.png)
 
-If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5us burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
+If the key on the remote controller is kept depressed, a repeat code will be issued consisting of a 9ms leading burst, a 2.25ms pause and a 562.5µs burst to mark the end. The repeat code will continue to be sent out at 108ms intervals, until the key is finally released.
 
 ![NEC_repeat.png](https://techdocs.altium.com/sites/default/files/wiki_attachments/296329/NECRepeatCodes.png)
 
@@ -149,7 +149,7 @@ while(1) {
 ```
 
 ## Implementation of the Philips RC-5 Protocol
-The Philips RC-5 protocol uses Manchester encoding on a carrier frequency of 36kHz. A "0" bit is an 889us burst followed by an 889us space, a "1" bit is an 889us space followed by an 889us burst. An IR telegram starts with two start bits. The first bit is always "1", the second bit is "1" in the original protocol and the inverted 7th bit of the command in the extended RC-5 protocol. The third bit toggles after each button release. The next five bits represent the device address and the last six bits represent the command, all transmitted MSB first.
+The Philips RC-5 protocol uses Manchester encoding on a carrier frequency of 36kHz. A "0" bit is an 889µs burst followed by an 889µs space, a "1" bit is an 889µs space followed by an 889µs burst. An IR telegram starts with two start bits. The first bit is always "1", the second bit is "1" in the original protocol and the inverted 7th bit of the command in the extended RC-5 protocol. The third bit toggles after each button release. The next five bits represent the device address and the last six bits represent the command, all transmitted MSB first.
 
 ![RC5_transmission.png](https://techdocs.altium.com/sites/default/files/wiki_attachments/296330/RC5MessageFrame.png)
 
@@ -200,7 +200,7 @@ void sendCode(uint8_t cmd) {
 ```
 
 ## Implementation of the Sony SIRC Protocol
-The Sony SIRC protocol uses pulse length encoding on a carrier frequency of 40kHz. A "0" bit is a 600us burst followed by a 600us space, a "1" bit is a 1200us burst followed by a 600us space. An IR telegram starts with a 2400us leading burst followed by a 600us space. The command and address bits are then transmitted, LSB first. Depending on the protocol version, these are in detail:
+The Sony SIRC protocol uses pulse length encoding on a carrier frequency of 40kHz. A "0" bit is a 600µs burst followed by a 600µs space, a "1" bit is a 1200µs burst followed by a 600µs space. An IR telegram starts with a 2400µs leading burst followed by a 600µs space. The command and address bits are then transmitted, LSB first. Depending on the protocol version, these are in detail:
 - 12-bit version: 7 command bits, 5 address bits
 - 15-bit version: 7 command bits, 8 address bits
 - 20-bit version: 7 command bits, 5 address bits, 8 extended bits
@@ -285,3 +285,9 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 6. [Tiny Remote RF](https://github.com/wagiminator/ATtiny13-TinyRemoteRF)
 7. [OSC Calibrator](https://github.com/wagiminator/ATtiny84-TinyCalibrator)
 8. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
+
+# License
+![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
+
+This work is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+(http://creativecommons.org/licenses/by-sa/3.0/)
