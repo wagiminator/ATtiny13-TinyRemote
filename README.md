@@ -285,6 +285,7 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 
 ![pic2.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic2.jpg)
 ![pic3.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic3.jpg)
+![pic4.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic4.jpg)
 
 # License
 ![license.png](https://i.creativecommons.org/l/by-sa/3.0/88x31.png)
