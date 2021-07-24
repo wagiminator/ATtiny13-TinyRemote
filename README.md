@@ -1,10 +1,12 @@
 # TinyRemote - IR Remote Control based on ATtiny13A
-TinyRemote is an IR remote control based on an ATtiny13A powered by a CR2032 or LIR2032 coin cell battery.
+TinyRemote is a 5-button IR remote control based on an ATtiny13A powered by a CR2032 or LIR2032 coin cell battery.
 
 - Project Video (YouTube): https://youtu.be/ad3eyNCov9c
 - Design Files (EasyEDA): https://easyeda.com/wagiminator/attiny13-tinyremote
 
 ![pic1.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic1.jpg)
+
+For the 12-button version of the ATtiny13A-based IR remote control visit https://github.com/wagiminator/ATtiny13-TinyRemoteXL.
 
 # Hardware
 The wiring is pretty simple:
@@ -250,7 +252,7 @@ void sendCode(uint8_t cmd) {
 ```
 
 ## Power Saving
-The code shuts down unused peripherals and utilizes the sleep mode power down function. It wakes up on every button press by pin change interrupt. The device will work several months on a CR2032 battery.
+The code shuts down unused peripherals and utilizes the sleep mode power down function. It wakes up on every button press by pin change interrupt.
 
 ```c
 // setup pin change interrupt
@@ -264,6 +266,12 @@ ACSR   = 0b10000000;                  // disable analog comperator
 PRR    = 0b00000001;                  // shut down ADC
 set_sleep_mode(SLEEP_MODE_PWR_DOWN);  // set sleep mode to power down
 ```
+
+As long as no button is pressed, the ATtiny remains in sleep mode power down and consumes a current of around 150nA at a voltage of 3V. The typical capacity of a CR2032 battery is 230mAh. This results in a theoretical battery life of 1.5 million hours or 179 years. In real life, of course, no battery will last that long due to its self-discharge. When the button is pressed, peaks of up to 30mA are consumed. The diagram below shows the course of the current consumption when a button is pressed and a NEC telegram is sent according to a measurement with the [Power Profiler Kit II](https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2):
+
+![Current.png](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_current.png)
+
+When sending a NEC telegram, the current requirement increases to an average of around 2.75mA for 71ms. Theoretically, over 4 million telegrams could be sent with one battery. Note that the rechargeable LIR2032 batteries have a significantly lower capacity.
 
 ## Timing Accuracy
 The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the factory calibration. Usually this is sufficient for an infrared remote control. Slight deviations in timing are tolerated by the receiver, since cheap remote controls are usually not more accurate. Nevertheless, it certainly doesn't hurt to [manually calibrate](https://github.com/wagiminator/ATtiny84-TinyCalibrator) the internal oscillator and set the corresponding OSCCAL value at the beginning of the code.
@@ -279,9 +287,10 @@ The accuracy of the internal oscillator of the ATtiny13 is +/-10% with the facto
 3. [IR remote control detective by David Johnson-Davies](http://www.technoblogy.com/show?24A9)
 4. [Infrared communication concepts (altium.com)](https://techdocs.altium.com/display/FPGA/Infrared+Communication+Concepts)
 5. [NEC decoder based on  ATtiny13A](https://github.com/wagiminator/ATtiny13-TinyDecoder)
-6. [Tiny Remote RF](https://github.com/wagiminator/ATtiny13-TinyRemoteRF)
-7. [OSC Calibrator](https://github.com/wagiminator/ATtiny84-TinyCalibrator)
-8. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
+6. [TinyRemote XL](https://github.com/wagiminator/ATtiny13-TinyRemoteXL)
+7. [TinyRemote RF](https://github.com/wagiminator/ATtiny13-TinyRemoteRF)
+8. [OSC Calibrator](https://github.com/wagiminator/ATtiny84-TinyCalibrator)
+9. [ATtiny13A datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/doc8126.pdf)
 
 ![pic2.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic2.jpg)
 ![pic3.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic3.jpg)
