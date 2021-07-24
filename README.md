@@ -6,7 +6,7 @@ TinyRemote is a 5-button IR remote control based on an ATtiny13A powered by a CR
 
 ![pic1.jpg](https://raw.githubusercontent.com/wagiminator/ATtiny13-TinyRemote/master/documentation/TinyRemote_pic1.jpg)
 
-For the 12-button version of the ATtiny13A-based IR remote control visit https://github.com/wagiminator/ATtiny13-TinyRemoteXL.
+For the 12-button version of the ATtiny13A-based IR remote control see [TinyRemoteXL](https://github.com/wagiminator/ATtiny13-TinyRemoteXL).
 
 # Hardware
 The wiring is pretty simple:
